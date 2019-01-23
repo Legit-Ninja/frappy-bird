@@ -2,9 +2,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
+import java.util.Random;
 
-import static javafx.application.Platform.exit;
 
 public class gameWindow extends JFrame{
     public static ArrayList<GameObject> gameObjects = new ArrayList<>();
@@ -32,46 +33,43 @@ public class gameWindow extends JFrame{
        lpane = new JLayeredPane();
        lpane.setPreferredSize(new Dimension(SCREEN_WIDTH, SCREEN_HEIGHT));
        lpane.setOpaque(true);
-       lpane.add(spacePanel());
-       lpane.add(pipePanel());
-       lpane.add(spacePanel());
-       lpane.add(pipePanel());
+       spacePanel();
+       pipePanel();
+       spacePanel();
+       pipePanel();
        bird.getImage().setBounds(75,300,50,50);
        lpane.add(bird.getImage(), JLayeredPane.PALETTE_LAYER);
 
        this.add(lpane);
        lpane.repaint();
    }
-   private JPanel spacePanel()
+   private void spacePanel()
    {
-       JPanel space = new JPanel();
-       space.setSize ( 150, SCREEN_HEIGHT);
-       space.setBounds(panelNum*150, 0, 300, SCREEN_HEIGHT);
+       lpane.setBounds(panelNum*150, 0, 300, SCREEN_HEIGHT);
        panelNum += 2;
-       return space;
    }
-   private JPanel pipePanel()
+   private void pipePanel()
    {
-       JPanel p = new JPanel();
+       int tHeight;
        panelNum++;
-       p.setBounds(panelNum*150,0, 150, SCREEN_HEIGHT);
-       p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
            topPipe t = new topPipe();
            bottomPipe b = new bottomPipe();
            scoreBox s = new scoreBox();
+           t.resetTopPipeHeight();
+           tHeight = t.getTopPipeHeight();
            gameObjects.add(t);
+           t.getImage().setBounds(panelNum*150, 0, 150, tHeight);
            gameObjects.add(s);
+           s.getImage().setBounds(panelNum*150, tHeight, 150, 100);
            gameObjects.add(b);
-           Box box = Box.createVerticalBox();
-           p.add(t.getImage());
+           b.getImage().setBounds(panelNum*150, tHeight+100, 150, (SCREEN_HEIGHT-tHeight)-100);   //randomizes the pipe's locations
+           lpane.add(t.getImage());
        (t.getImage()).setAlignmentX(Component.CENTER_ALIGNMENT);
-           p.add(s.getImage());
+           lpane.add(s.getImage());
        (s.getImage()).setAlignmentX(Component.CENTER_ALIGNMENT);
-           p.add(b.getImage());
+           lpane.add(b.getImage());
        (b.getImage()).setAlignmentX(Component.CENTER_ALIGNMENT);
 
-           //p.add(box);
-        return p;
    }
 
 
@@ -80,10 +78,13 @@ public class gameWindow extends JFrame{
        JFrame end = new JFrame();      //score window
         JLabel score = new JLabel();
         score.setText("Score: "  + scoreTally);
+        end.add(score);
         end.setSize(250,250);
         end.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         end.setVisible(true);
-        exit();
+        try {
+            Thread.sleep(58987);
+        }catch( Exception ex ) {}
    }
     public static void scoreUp() { scoreTally++; }
     public static boolean collide()
@@ -91,16 +92,16 @@ public class gameWindow extends JFrame{
         boolean intersects = false;
         for (int i= 0; i < gameObjects.size(); i++) {
             for (int j = 1; j < gameObjects.size(); j++) {
-
-                if (((gameObjects.get(i)).getImage().getBounds()).intersects(((gameObjects.get(j)).getImage().getBounds())) && gameObjects.get(j).getClass() == topPipe.class) {     // checks to see if the two labels intersect
+                intersects = false;
+                if (i == j) {}
+                else if (((gameObjects.get(i)).getImage().getBounds()).intersects(((gameObjects.get(j)).getImage().getBounds())) && gameObjects.get(j).getClass() == topPipe.class) {     // checks to see if the two labels intersect
                     intersects = true;
-
-                    //GameOver();
+                    GameOver();
                 } else if (((gameObjects.get(i)).getImage().getBounds()).intersects(((gameObjects.get(j)).getImage().getBounds())) && (gameObjects.get(j)).getClass() == bottomPipe.class) {
                     intersects = true;
-                    //GameOver();
-                    System.out.println("boom");
+                    GameOver();
                 } else if (((gameObjects.get(i)).getImage().getBounds()).intersects(((gameObjects.get(j)).getImage().getBounds())) && (gameObjects.get(j)).getClass() == scoreBox.class) {
+                    intersects = true;
                     scoreUp();
                 }
             }
@@ -118,20 +119,13 @@ public class gameWindow extends JFrame{
                     bird.move();
                     collide();
                     try {
-                        Thread.sleep(300);
+                        Thread.sleep(100);
                     } catch (Exception ex) { ex.printStackTrace(); }
                 }
             }
         });
         animation.start();
 
-        // MAIN GAME LOOOOOOOOOOP
-        /*JFrame end = new JFrame();      //score window
-        JLabel score = new JLabel();
-        score.setText("Score: "  + scoreTally);
-        end.setSize(250,250);
-        end.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        end.setVisible(true); */
 
     }
 

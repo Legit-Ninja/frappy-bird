@@ -2,12 +2,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
-
-import static com.sun.java.accessibility.util.AWTEventMonitor.addKeyListener;
+import java.util.Random;
 
 public class GameObject {
-
-
+    public Random rand = new Random(System.currentTimeMillis());
+    protected int topPipeHeight;
     protected JLabel image;
     protected double vx, vy;
     protected int SCREEN_WIDTH = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
@@ -15,13 +14,21 @@ public class GameObject {
 
     GameObject()
     {
+        topPipeHeight = rand.nextInt(500)+100;
         image = new JLabel();   //very important data field
         vx = 0.0;
         vy = 0.0;
     }
     public JLabel getImage() { return image;}
 
+    public int getTopPipeHeight() {
+        return topPipeHeight;
+    }
+    public void resetTopPipeHeight() {
+        topPipeHeight = rand.nextInt(500) + 100;
+    }
 }
+
 class bird extends GameObject implements KeyListener
 {
     int x, y;
@@ -37,17 +44,17 @@ class bird extends GameObject implements KeyListener
             l.setIcon(i);
             image = l;
         } catch (Exception ex) {}
-        vy = 3.0;
-        vx = 3.0;  // how fast is this
+        vy = 9.0;
+        vx = 9.0;  // how fast is this
         x = 75; y = 300;
     }
     public void keyPressed( KeyEvent k) {
         if (k.getKeyCode() == 40) {
-            vy = 3;
-            move();
+            vy = 9;
+            //move();
         } else {
-            vy = -3;//is this a good number?
-            move();
+            vy = -9;//is this a good number?
+           // move();
         }
     }
     public void keyReleased(KeyEvent k) {}
@@ -68,7 +75,7 @@ class scoreBox extends GameObject
         try {
             imgurl = getClass().getResource("/resources/white.png");
             Image img = toolkit.getImage(imgurl);
-            img = img.getScaledInstance(150, SCREEN_HEIGHT / 4, Image.SCALE_SMOOTH);
+            img = img.getScaledInstance(150, 100, Image.SCALE_SMOOTH);
             ImageIcon i = new ImageIcon(img);
             JLabel l = new JLabel();
             l.setIcon(i);
@@ -83,16 +90,18 @@ class topPipe extends GameObject
     URL imgurl;
     topPipe()
         {
+
             Toolkit toolkit = Toolkit.getDefaultToolkit();      //makes addedLabel ans stores it
             try {
                 imgurl = getClass().getResource("/resources/pipe_down.png");
                 Image img = toolkit.getImage(imgurl);
-                img = img.getScaledInstance(150, SCREEN_HEIGHT/4, Image.SCALE_SMOOTH);
+                img = img.getScaledInstance(150, topPipeHeight, Image.SCALE_SMOOTH);
                 ImageIcon i = new ImageIcon(img);
                 JLabel l = new JLabel();
                 l.setIcon(i);
                 image = l;
             } catch (Exception ex) {}
+            topPipeHeight = rand.nextInt(500)+100;
     }
 
 }
@@ -108,7 +117,7 @@ class bottomPipe extends GameObject {
         try {
             bottomPipe = getClass().getResource("/resources/pipe_up.png");
             bottomPipeimg = tk.getImage(bottomPipe);
-            bottomPipeimg = bottomPipeimg.getScaledInstance(150, SCREEN_HEIGHT / 4, Image.SCALE_SMOOTH);
+            bottomPipeimg = bottomPipeimg.getScaledInstance(150, SCREEN_HEIGHT-topPipeHeight-100, Image.SCALE_SMOOTH);
             bottomPipeIcon = new ImageIcon(bottomPipeimg);
             bottomPipeLabel = new JLabel();
             bottomPipeLabel.setIcon(bottomPipeIcon);
