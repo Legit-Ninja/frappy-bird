@@ -1,9 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
-import java.net.URL;
 import java.util.Random;
 
+/**
+ * our GameObject class is the parent of all our pipe/box/bird classes
+ * it has a JLabel to display what it is and a 0 velocity of the object (which is only used in bird)
+ */
 public class GameObject {
     public Random rand = new Random(System.currentTimeMillis());
     protected int topPipeHeight;
@@ -12,120 +14,35 @@ public class GameObject {
     protected int SCREEN_WIDTH = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     protected int SCREEN_HEIGHT = (int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 
+    /**
+     * simply makes a new JLabel, sets the velocities to 0, and decides where our pipes are going to be located
+     */
     GameObject()
     {
-        topPipeHeight = rand.nextInt(500)+100;
-        image = new JLabel();   //very important data field
+        topPipeHeight = rand.nextInt(300)+400;
+        image = new JLabel();
         vx = 0.0;
         vy = 0.0;
     }
+
+    /**
+     * Used all the time when drawing to UI
+     * @return the desired image
+     */
     public JLabel getImage() { return image;}
 
+    /**
+     * Allows us to keep the random number so we can set the proper locations for our images without them overlapping.
+     */
     public int getTopPipeHeight() {
         return topPipeHeight;
     }
+
+    /**
+     * Called to set the location of each column so they are slightly different
+     */
     public void resetTopPipeHeight() {
-        topPipeHeight = rand.nextInt(500) + 100;
-    }
-}
-
-class bird extends GameObject implements KeyListener
-{
-    int x, y;
-    bird()
-    {
-        Toolkit toolkit = Toolkit.getDefaultToolkit();      //makes addedLabel ans stores it
-        try {
-            URL imgurl = getClass().getResource("/resources/Bird2-1.png.png");
-            Image img = toolkit.getImage(imgurl);
-            img = img.getScaledInstance( 50, 50, Image.SCALE_SMOOTH);
-            ImageIcon i = new ImageIcon(img);
-            JLabel l = new JLabel();
-            l.setIcon(i);
-            image = l;
-        } catch (Exception ex) {}
-        vy = 9.0;
-        vx = 9.0;  // how fast is this
-        x = 75; y = 300;
-    }
-    public void keyPressed( KeyEvent k) {
-        if (k.getKeyCode() == 40) {
-            vy = 9;
-            //move();
-        } else {
-            vy = -9;//is this a good number?
-           // move();
-        }
-    }
-    public void keyReleased(KeyEvent k) {}
-    public void keyTyped (KeyEvent k) {}
-    public void move()
-    {
-        (this.getImage()).setLocation(x += (int)vx, y += (int)vy);
-    }
-
-}
-
-
-class scoreBox extends GameObject
-{
-    scoreBox() {
-        URL imgurl;
-        Toolkit toolkit = Toolkit.getDefaultToolkit();      //makes addedLabel ans stores it
-        try {
-            imgurl = getClass().getResource("/resources/white.png");
-            Image img = toolkit.getImage(imgurl);
-            img = img.getScaledInstance(150, 100, Image.SCALE_SMOOTH);
-            ImageIcon i = new ImageIcon(img);
-            JLabel l = new JLabel();
-            l.setIcon(i);
-            image = l;
-        } catch (Exception ex) {
-        }
-        image.setVisible(true);
-    }
-}
-class topPipe extends GameObject
-{
-    URL imgurl;
-    topPipe()
-        {
-
-            Toolkit toolkit = Toolkit.getDefaultToolkit();      //makes addedLabel ans stores it
-            try {
-                imgurl = getClass().getResource("/resources/pipe_down.png");
-                Image img = toolkit.getImage(imgurl);
-                img = img.getScaledInstance(150, topPipeHeight, Image.SCALE_SMOOTH);
-                ImageIcon i = new ImageIcon(img);
-                JLabel l = new JLabel();
-                l.setIcon(i);
-                image = l;
-            } catch (Exception ex) {}
-            topPipeHeight = rand.nextInt(500)+100;
-    }
-
-}
-class bottomPipe extends GameObject {
-    private URL bottomPipe;
-    private Image bottomPipeimg;
-    private ImageIcon bottomPipeIcon;
-    private JLabel bottomPipeLabel;
-
-    bottomPipe() {
-
-        Toolkit tk = Toolkit.getDefaultToolkit();
-        try {
-            bottomPipe = getClass().getResource("/resources/pipe_up.png");
-            bottomPipeimg = tk.getImage(bottomPipe);
-            bottomPipeimg = bottomPipeimg.getScaledInstance(150, SCREEN_HEIGHT-topPipeHeight-100, Image.SCALE_SMOOTH);
-            bottomPipeIcon = new ImageIcon(bottomPipeimg);
-            bottomPipeLabel = new JLabel();
-            bottomPipeLabel.setIcon(bottomPipeIcon);
-            image = bottomPipeLabel;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        image.setVisible(true);
+        topPipeHeight = rand.nextInt(200) + 400;
     }
 }
 
